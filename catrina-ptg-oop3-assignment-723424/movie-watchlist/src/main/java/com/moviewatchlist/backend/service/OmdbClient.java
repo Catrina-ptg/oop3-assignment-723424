@@ -1,29 +1,34 @@
 package com.moviewatchlist.backend.service;
 
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
+@Component
 public class OmdbClient {
 
-    private final String apiKey = "YOUR_OMDB_API_KEY";
+    @Value("${omdb.api.key}")
+    private String omdbApiKey;
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     public Map<String, String> fetchMovieData(String title) {
-        String url = "http://www.omdbapi.com/?t=" + title + "&apikey=" + apiKey;
-        String response = restTemplate.getForObject(url, String.class);
-        JSONObject json = new JSONObject(response);
+        String url = "http://www.omdbapi.com/?t=" + title + "&apikey=" + omdbApiKey;
+        Map<String, Object> response = restTemplate.getForObject(url, Map.class);
 
-        Map<String, String> data = new HashMap<>();
-        data.put("title", json.optString("Title"));
-        data.put("year", json.optString("Year"));
-        data.put("director", json.optString("Director"));
-        data.put("genre", json.optString("Genre"));
+        if (response == null || response.get("Response").equals("False")) {
+            throw new RuntimeException("Movie not found in OMDb: " + title);
+        }
 
-        return data;
+        Map<String, String> movieData = new HashMap<>();
+        movieData.put("title", (String) response.get("Title"));
+        movieData.put("year", (String) response.get("Year"));
+        movieData.put("director", (String) response.get("Director"));
+        movieData.put("genre", (String) response.get("Genre"));
+
+        return movieData;
     }
 }

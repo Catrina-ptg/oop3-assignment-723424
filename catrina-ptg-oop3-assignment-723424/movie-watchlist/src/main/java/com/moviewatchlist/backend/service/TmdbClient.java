@@ -1,58 +1,70 @@
 package com.moviewatchlist.backend.service;
 
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-@Service
+@Component
 public class TmdbClient {
 
-    private final String apiKey = "YOUR_TMDB_API_KEY";
+    @Value("${tmdb.api.key}")
+    private String tmdbApiKey;
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     public List<String> fetchImagePaths(String title) {
-        String searchUrl = "https://api.themoviedb.org/3/search/movie?api_key=" + apiKey + "&query=" + title;
-        String response = restTemplate.getForObject(searchUrl, String.class);
-        JSONObject json = new JSONObject(response);
-        JSONArray results = json.getJSONArray("results");
+        String url = "https://api.themoviedb.org/3/search/movie?api_key=" + tmdbApiKey + "&query=" + title;
+        Map<String, Object> response = restTemplate.getForObject(url, Map.class);
 
-        if (results.length() == 0) return List.of();
+        if (response == null || response.get("results") == null) {
+            return new ArrayList<>();
+        }
 
-        int movieId = results.getJSONObject(0).getInt("id");
-        String imagesUrl = "https://api.themoviedb.org/3/movie/" + movieId + "/images?api_key=" + apiKey;
-        String imagesResponse = restTemplate.getForObject(imagesUrl, String.class);
-        JSONArray backdrops = new JSONObject(imagesResponse).getJSONArray("backdrops");
+        List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
+        if (results.isEmpty()) return new ArrayList<>();
 
+        Map<String, Object> movie = results.get(0);
+        Integer id = (Integer) movie.get("id");
+
+        String imageUrl = "https://api.themoviedb.org/3/movie/" + id + "/images?api_key=" + tmdbApiKey;
+        Map<String, Object> imageResponse = restTemplate.getForObject(imageUrl, Map.class);
+
+        List<Map<String, Object>> backdrops = (List<Map<String, Object>>) imageResponse.get("backdrops");
         List<String> paths = new ArrayList<>();
-        for (int i = 0; i < Math.min(3, backdrops.length()); i++) {
-            paths.add("https://image.tmdb.org/t/p/w780" + backdrops.getJSONObject(i).getString("file_path"));
+
+        for (int i = 0; i < Math.min(3, backdrops.size()); i++) {
+            paths.add("https://image.tmdb.org/t/p/w780" + backdrops.get(i).get("file_path"));
         }
 
         return paths;
     }
 
     public List<String> fetchSimilarMovies(String title) {
-        String searchUrl = "https://api.themoviedb.org/3/search/movie?api_key=" + apiKey + "&query=" + title;
-        String response = restTemplate.getForObject(searchUrl, String.class);
-        JSONObject json = new JSONObject(response);
-        JSONArray results = json.getJSONArray("results");
+        String searchUrl = "https://api.themoviedb.org/3/search/movie?api_key=" + tmdbApiKey + "&query=" + title;
+        Map<String, Object> searchResponse = restTemplate.getForObject(searchUrl, Map.class);
 
-        if (results.length() == 0) return List.of();
-
-        int movieId = results.getJSONObject(0).getInt("id");
-        String similarUrl = "https://api.themoviedb.org/3/movie/" + movieId + "/similar?api_key=" + apiKey;
-        String similarResponse = restTemplate.getForObject(similarUrl, String.class);
-        JSONArray similar = new JSONObject(similarResponse).getJSONArray("results");
-
-        List<String> similarTitles = new ArrayList<>();
-        for (int i = 0; i < Math.min(5, similar.length()); i++) {
-            similarTitles.add(similar.getJSONObject(i).getString("title"));
+        if (searchResponse == null || searchResponse.get("results") == null) {
+            return new ArrayList<>();
         }
 
-        return similarTitles;
+        List<Map<String, Object>> results = (List<Map<String, Object>>) searchResponse.get("results");
+        if (results.isEmpty()) return new ArrayList<>();
+
+        Integer id = (Integer) results.get(0).get("id");
+        String similarUrl = "https://api.themoviedb.org/3/movie/" + id + "/similar?api_key=" + tmdbApiKey;
+
+        Map<String, Object> similarResponse = restTemplate.getForObject(similarUrl, Map.class);
+        List<Map<String, Object>> similarResults = (List<Map<String, Object>>) similarResponse.get("results");
+
+        List<String> titles = new ArrayList<>();
+        for (int i = 0; i < Math.min(3, similarResults.size()); i++) {
+            titles.add((String) similarResults.get(i).get("title"));
+        }
+
+        return titles;
     }
 }
