@@ -1,0 +1,4 @@
+com\moviewatchlist\backend\controller\MovieController.class
+com\moviewatchlist\backend\model\Movie.class
+com\moviewatchlist\backend\repository\MovieRepository.class
+com\moviewatchlist\backend\service\OmdbClient.class
