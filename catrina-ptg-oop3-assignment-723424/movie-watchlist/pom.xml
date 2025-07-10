@@ -49,7 +49,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- JSON.org library -->
+        <!-- JSON.org -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -69,6 +69,10 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.2.4</version>
+                <configuration>
+                    <mainClass>com.moviewatchlist.backend.Main</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

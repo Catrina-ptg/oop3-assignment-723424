@@ -1,3 +1,10 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-21",
+            "path": "C:/Users/titan/AppData/Roaming/Code/User/globalStorage/pleiades.java-extension-pack-jdk/java/latest",
+            "default": true
+        }
+    ]
 }
