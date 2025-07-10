@@ -41,7 +41,7 @@ This is a Java Spring Boot application that allows users to search for movies, v
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/movie-watchlist.git
+git clone https://github.com/Catrina-ptg/oop3-assignment-723424.git
 cd movie-watchlist
 ```
 
