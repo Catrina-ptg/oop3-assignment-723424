@@ -80,7 +80,7 @@ java -jar target/movie-watchlist-1.0.0.jar
 ### Add a movie
 
 ```
-POST /api/movies?title=The Amateur
+POST /api/movies?title=[movie_title]
 ```
 
 ### Retrieve all movies
