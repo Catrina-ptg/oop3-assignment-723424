@@ -4,6 +4,7 @@ import com.moviewatchlist.backend.model.Movie;
 import com.moviewatchlist.backend.repository.MovieRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,18 @@ public class AppTest {
 
         Movie result = movieService.addMovie(title);
 
+        JSONObject json = new JSONObject();
+        json.put("title", result.getTitle());
+        json.put("year", result.getYear());
+        json.put("director", result.getDirector());
+        json.put("genre", result.getGenre());
+        json.put("watched", result.isWatched());
+        json.put("rating", result.getRating());
+        json.put("imagePath", result.getImagePath());
+        json.put("similarMovies", result.getSimilarMovies());
+
+        System.out.println("Added movie (Thunderbolts*): " + json.toString(2));
+
         assertEquals(title, result.getTitle());
         assertEquals("Action", result.getGenre());
         assertTrue(result.getSimilarMovies().contains("Black Widow"));
@@ -93,6 +106,18 @@ public class AppTest {
         when(repoMock.save(any(Movie.class))).thenReturn(saved);
 
         Movie result = movieService.addMovie(title);
+
+        JSONObject json = new JSONObject();
+        json.put("title", result.getTitle());
+        json.put("year", result.getYear());
+        json.put("director", result.getDirector());
+        json.put("genre", result.getGenre());
+        json.put("watched", result.isWatched());
+        json.put("rating", result.getRating());
+        json.put("imagePath", result.getImagePath());
+        json.put("similarMovies", result.getSimilarMovies());
+
+        System.out.println("Added movie (Halloween): " + json.toString(2));
 
         assertEquals("Halloween", result.getTitle());
         assertEquals("John Carpenter", result.getDirector());

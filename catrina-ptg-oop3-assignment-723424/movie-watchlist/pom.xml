@@ -46,10 +46,11 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>1.18.30</version>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- JSON.org -->
+        <!-- JSON.org library -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -69,10 +70,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>3.2.4</version>
-                <configuration>
-                    <mainClass>com.moviewatchlist.backend.Main</mainClass>
-                </configuration>
             </plugin>
         </plugins>
     </build>
